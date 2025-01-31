@@ -203,11 +203,6 @@ func (r Span[T]) Equal(other Span[T]) bool {
 	return r.comparator.Equal(r.start, other.start) && r.comparator.Equal(r.end, other.end)
 }
 
-// String implements the fmt.Stringer interface.
-func (r Span[T]) String() string {
-	return fmt.Sprintf("[%s..%s]", r.start, r.end)
-}
-
 func (r Span[T]) isZero(value T) bool {
 	var zero T
 	return r.comparator.Equal(value, zero)
