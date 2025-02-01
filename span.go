@@ -101,9 +101,6 @@ func (r Span[T]) End() T {
 
 // Contains Test if the value T is contained in receiver Span.
 func (r Span[T]) Contains(value T) bool {
-	if r.isZero(value) {
-		return false
-	}
 	return !r.comparator.Less(value, r.start) && !r.comparator.Less(r.end, value)
 }
 
@@ -135,9 +132,9 @@ func (r Span[T]) Intersect(other Span[T]) Span[T] {
 	if r.comparator.Less(r.start, other.start) {
 		start = other.start
 	}
-	end := other.end
+	end := r.end
 	if r.comparator.Less(other.end, r.end) {
-		end = r.end
+		end = other.end
 	}
 	return Span[T]{
 		start:      start,
@@ -148,9 +145,6 @@ func (r Span[T]) Intersect(other Span[T]) Span[T] {
 
 // After test if the receiver Span is after the provided value.
 func (r Span[T]) After(value T) bool {
-	if r.isZero(value) {
-		return false
-	}
 	return r.comparator.Less(value, r.start)
 }
 
@@ -161,9 +155,6 @@ func (r Span[T]) AfterSpan(other Span[T]) bool {
 
 // Before test if the receiver Span is before the provided value.
 func (r Span[T]) Before(value T) bool {
-	if r.isZero(value) {
-		return false
-	}
 	return r.comparator.Less(r.end, value)
 }
 
@@ -174,17 +165,11 @@ func (r Span[T]) BeforeSpan(other Span[T]) bool {
 
 // StartedBy test if the receiver Span is started by provided value.
 func (r Span[T]) StartedBy(value T) bool {
-	if r.isZero(value) {
-		return false
-	}
 	return r.comparator.Equal(value, r.start)
 }
 
 // EndedBy test if the receiver Span is ended by provided value.
 func (r Span[T]) EndedBy(value T) bool {
-	if r.isZero(value) {
-		return false
-	}
 	return r.comparator.Equal(value, r.end)
 }
 
@@ -193,17 +178,7 @@ func (r Span[T]) OverlappedBy(other Span[T]) bool {
 	return other.Contains(r.start) || other.Contains(r.end) || r.Contains(other.start)
 }
 
-// IsZero test if the receiver Span is the zero value.
-func (r Span[T]) IsZero() bool {
-	return r.isZero(r.start) && r.isZero(r.end)
-}
-
 // Equal test if the receiver Span is equal to another one.
 func (r Span[T]) Equal(other Span[T]) bool {
 	return r.comparator.Equal(r.start, other.start) && r.comparator.Equal(r.end, other.end)
-}
-
-func (r Span[T]) isZero(value T) bool {
-	var zero T
-	return r.comparator.Equal(value, zero)
 }
